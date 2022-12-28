@@ -1,5 +1,5 @@
 from view import ViewMenu, ViewCreateTournament, ViewTournamentInProgress
-from models import Tournament
+from models import Tournament, DataExtractTournament
 
 
 class Controler:
@@ -14,13 +14,18 @@ class Controler:
 
     def test_selection_menu(self, result_main_page_menu):
         if (result_main_page_menu == "1"):
-            # nouveau tournois
+            # Créer un nouveau tournois
+            # Sauvegarder dans la base de donné avec le model Tournaments
             data_tournament = ViewCreateTournament().main()
-            self.list_tournement_in_progress.append(data_tournament)
+            print(data_tournament)
+            Tournament(data_tournament[0], data_tournament[1], data_tournament[2], data_tournament[3],
+                       data_tournament[4], data_tournament[5]).add_tournament_in_data_base()
 
         elif (result_main_page_menu == "2"):
-            tournament_in_progress = ViewTournamentInProgress(self.list_tournement_in_progress)
-            tournament_in_progress.main()
+            # Parcourir les tournois
+            tournament_in_progress = ViewTournamentInProgress(DataExtractTournament().return_all_name_tournament())
+            result_tournament_in_progress = tournament_in_progress.main()
+            print(result_tournament_in_progress)
 
         elif (result_main_page_menu == "3"):
             print("joueurs sauvegardés")

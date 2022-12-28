@@ -25,13 +25,11 @@ class ViewCreateTournament:
         self.date_end = ""
         self.list_players = []
         self.description = ""
-        self.status = ""
 
     def main(self):
         self.initialisation_data_tournament()
         self.resum_creation_tournament()
-        return [self.name_tournament, self.location, self.date_start, self.date_end,
-                self.list_players, self.description]
+        return (self.name_tournament, self.location, self.date_start, self.date_end, self.list_players, self.description)
 
     def initialisation_data_tournament(self):
         print()
@@ -78,10 +76,10 @@ class ViewTournamentInProgress:
             input("Le chiffre n'est pas valide")
             self.main()
         else:
-            self.display_tournament(self.value_input)
+            number_the_tournament = self.display_tournament(self.value_input)
 
         if self.value_input == 1:
-            return "Continuer le tournois"
+            return number_the_tournament
         elif self.value_input == 99:
             self.main()
         elif self.value_input == 999:
@@ -93,8 +91,10 @@ class ViewTournamentInProgress:
     def menu_tournament_in_progress(self):
         print()
         print("Les tournois en cours: ")
-        for list in range(len(self.list_tournement_in_progress)):
-            print(list, self.list_tournement_in_progress[list][0])
+        i = 0
+        for tournois in self.list_tournement_in_progress:
+            print(i, tournois["name"])
+            i += 1
 
         print("999 Menu principal")
         print()
@@ -104,29 +104,18 @@ class ViewTournamentInProgress:
         self.value_input = self.check_value_input_int(input_selection)
 
     def display_tournament(self, value_menu_tournament_in_progress):
-        dict_info_tournament = {"Nom du tournois : ":
-                                self.list_tournement_in_progress[value_menu_tournament_in_progress][0],
-                                "Adresse du tournois : ":
-                                self.list_tournement_in_progress[value_menu_tournament_in_progress][1],
-                                "Date du début du tournois : ":
-                                self.list_tournement_in_progress[value_menu_tournament_in_progress][2],
-                                "Date de fin du tournois : ":
-                                self.list_tournement_in_progress[value_menu_tournament_in_progress][3],
-                                "Joueurs du tournois":
-                                self.list_tournement_in_progress[value_menu_tournament_in_progress][4],
-                                "Description du tournois : ":
-                                self.list_tournement_in_progress[value_menu_tournament_in_progress][5]
-                                }
-        for dict in dict_info_tournament.items():
-            print(dict)
+        for description, value in self.list_tournement_in_progress[value_menu_tournament_in_progress].items():
+            print(description, ":", value)
 
         print()
         print("1 Continuer le tournois")
         print("99 Retour")
         print("999 Menu principal")
         print()
+        number_the_tournament = self.value_input
         input_selection = input("Sélectionner un chiffre : ")
         self.value_input = self.check_value_input_int(input_selection)
+        return number_the_tournament
 
     def check_value_input_int(self, value):
         try:
