@@ -8,6 +8,36 @@ class Player:
         self.date_of_birth = date_of_birth
         self.sex = sex
         self.classification = classification
+        self.db = TinyDB('./data_base/players.json')
+
+    def add_player_in_data_base(self):
+        self.db.insert(
+            {"name": self.name, "first_name": self.first_name, "date_of_birth": self.date_of_birth,
+             "sex": self.sex, "classification": self.classification}
+        )
+
+
+class DataPlayer():
+    def __init__(self):
+        self.db = TinyDB('./data_base/players.json')
+        self.db_all = self.db.all()
+
+    def return_all_player(self):
+        return self.db_all
+
+    def update_parameter_in_data_base(self, value_to_change, parameter_to_change, indice_player):
+        if parameter_to_change == 0:
+            parameter_to_change = "name"
+        elif parameter_to_change == 1:
+            parameter_to_change = "first_name"
+        elif parameter_to_change == 2:
+            parameter_to_change = "date_of_birth"
+        elif parameter_to_change == 3:
+            parameter_to_change = "sex"
+        elif parameter_to_change == 4:
+            parameter_to_change = "classification"
+        print(parameter_to_change)
+        self.db.update({parameter_to_change: value_to_change}, doc_ids=[indice_player])
 
 
 class Tournament:
