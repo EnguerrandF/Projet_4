@@ -25,6 +25,9 @@ class DataPlayer():
     def return_all_player(self):
         return self.db_all
 
+    def return_db(self):
+        return self.db
+
     def update_parameter_in_data_base(self, value_to_change, parameter_to_change, indice_player):
         if parameter_to_change == 0:
             parameter_to_change = "name"
@@ -48,7 +51,7 @@ class Tournament:
         self.date_start = date_start
         self.date_end = date_end
         self.turn = 4
-        self.round = []  # in round stock list match
+        self.round = {}  # in round stock list match
         self.list_players = list_players
         self.time = 1
         self.description = description
@@ -57,17 +60,23 @@ class Tournament:
 
     def add_tournament_in_data_base(self):
         self.db.insert({"name": self.name_tournament, "location": self.location, "date_start": self.date_start,
-                        "date_end": self.date_end, "turn": self.turn, "round": self.round, "players": self.list_players,
-                        "time": self.time, "description": self.description, "status": self.status})
+                        "date_end": self.date_end, "turn": self.turn, "round": self.round,
+                        "players": self.list_players, "time": self.time, "description": self.description,
+                        "status": self.status})
 
 
-class DataExtractTournament:
+class DataTournament:
     def __init__(self):
         self.db = TinyDB('./data_base/tournament.json')
-        self.db_all = self.db.all()
 
     def main(self):
         pass
 
     def return_all_name_tournament(self):
-        return self.db_all
+        return self.db.all()
+
+    def return_db(self):
+        return self.db
+
+    def update_round(self, parameter_to_change, value_to_change, indice_tournament):
+        self.db.update({parameter_to_change: value_to_change}, doc_ids=[indice_tournament])
