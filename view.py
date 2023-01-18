@@ -34,6 +34,7 @@ class ViewCreateTournament:
                 self.date_end, self.list_players, self.description)
 
     def initialisation_data_tournament(self):
+        id_max_player = 1
         print()
         print("Nouveau Tournois")
         print()
@@ -41,14 +42,24 @@ class ViewCreateTournament:
         self.location = input("Adresse du tournois : ")
         self.date_start = input("Date du début du tournois : ")
         self.date_end = input("Date de fin du tournois : ")
-        print("Les joeurs de la base de donnée : ")
+        self.description = input("Description du tournois : ")
+        print("Les joueurs de la base de donnée : ")
         for player in self.list_player_data_base.all():
             print(player.doc_id, player["name"])
+            # Retouner id max
+            if int(player.doc_id) > int(id_max_player):
+                id_max_player = str(player.doc_id)
 
+        print("id max", id_max_player)
         for player in range(1, 9):
             players = input(f"Id du joueur {player} : ")
-            self.list_players.append(players)
-        self.description = input("Description du tournois : ")
+            if not players.isdigit() or int(players) > int(id_max_player) or players == "0":
+                input("L'ID sélectionné n'est pas valide")
+                self.list_players = []
+                self.initialisation_data_tournament()
+                break
+            else:
+                self.list_players.append(players)
 
     def resum_creation_tournament(self):
         print()
@@ -134,7 +145,7 @@ class ViewTournamentInProgress:
               "vs",
               self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][3][1][0][1]))["name"])
 
-    def edit_result_round(self, id_round):
+    def edit_result_round(self):
         print()
         print("03 Entrer le résultat du match 1")
         print("04 Entrer le résultat du match 2")
@@ -144,7 +155,6 @@ class ViewTournamentInProgress:
         print("02 Retour")
         print("01 Menu principal")
         valeur_input = input("Sélectionner un chiffre : ")
-
         if not valeur_input.isdigit() or int(valeur_input) > 7:
             print("Sélection non valide")
             input()
@@ -178,7 +188,7 @@ class ViewTournamentInProgress:
             elif valeur_input == "02":
                 return "02"
 
-    def report_tournament(self, selection_tournament):
+    def report_tournament(self, selection_tournament, list_player_and_score):
         print("Tournois terminé")
         print()
         list_tournament = self.list_tournement_in_progress.get(doc_id=str(selection_tournament))
@@ -209,6 +219,13 @@ class ViewTournamentInProgress:
             print("Date et heure de début :", list_tournament["round"]["round_" + str(round + 1)][4][0])
             print("Date et heure de fin du round :", list_tournament["round"]["round_" + str(round + 1)][4][1])
         print()
+        print("Classement du tournois :")
+        list_player_and_score.sort(reverse=True)
+        print(list_player_and_score)
+        for data in list_player_and_score:
+            print(self.list_player_data_base.get(doc_id=data[1])["name"],
+                  data[0], 
+                  "points")
         input("Menu principal")
 
 

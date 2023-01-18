@@ -48,10 +48,13 @@ class Controler:
                                                               self.list_player_in_data_base,
                                                               False)
             result_menu = tournament_in_progress.menu_tournament_in_progress()
+            
             if result_menu == "01":
                 pass
             else:
-                tournament_in_progress.report_tournament(result_menu)
+                list_players_score = ControlerTournamentInProgress().players_and_score(result_menu)
+                tournament_in_progress.report_tournament(result_menu,
+                                                         list_players_score)
 
         elif (self.answer_view_menu == "6"):
             print("Aurevoir et a bientôt")
@@ -131,14 +134,14 @@ class ControlerTournamentInProgress:
         elif len(self.list_tournament_work()["round"]) == 1:
             if self.list_tournament_work()["round"]["round_1"][4][1] == "":
                 self.view_tournament_in_progress.display_match_round(self.list_tournament_work(), "round_1")
-                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round("2")
+                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round()
                 self.end_round(value_edit_result_first_round, "round_1")
             else:
                 self.creation_round(2)
         elif len(self.list_tournament_work()["round"]) == 2:
             if self.list_tournament_work()["round"]["round_2"][4][1] == "":
                 self.view_tournament_in_progress.display_match_round(self.list_tournament_work(), "round_2")
-                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round("2")
+                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round()
                 if value_edit_result_first_round[0] == False or value_edit_result_first_round[0] is False:
                     print()
                 self.end_round(value_edit_result_first_round, "round_2")
@@ -147,20 +150,21 @@ class ControlerTournamentInProgress:
         elif len(self.list_tournament_work()["round"]) == 3:
             if self.list_tournament_work()["round"]["round_3"][4][1] == "":
                 self.view_tournament_in_progress.display_match_round(self.list_tournament_work(), "round_3")
-                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round("3")
+                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round()
                 self.end_round(value_edit_result_first_round, "round_3")
             else:
                 self.creation_round(4)
         elif len(self.list_tournament_work()["round"]) == 4:
             if self.list_tournament_work()["round"]["round_4"][4][1] == "":
                 self.view_tournament_in_progress.display_match_round(self.list_tournament_work(), "round_4")
-                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round("4")
+                value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round()
                 self.end_round(value_edit_result_first_round, "round_4")
             else:
                 DataTournament().update_round("status", False, self.selection_tournament)
-                self.view_tournament_in_progress.report_tournament(self.selection_tournament)
-                self.answer_view_menu_tournament_in_progress = " "
-                self.answer_display_tournament = " "
+                self.view_tournament_in_progress.report_tournament(self.selection_tournament,
+                                                                   self.players_and_score(self.selection_tournament))
+                self.answer_view_menu_tournament_in_progress = ""
+                self.answer_display_tournament = ""
 
     def creation_first_round(self):
         list_player = []
@@ -179,7 +183,6 @@ class ControlerTournamentInProgress:
         DataTournament().update_round("round", creation_round, self.selection_tournament)
 
     def end_round(self, value_edit_result_first_round, id_round):
-        print(value_edit_result_first_round[0], value_edit_result_first_round[1])
         if value_edit_result_first_round == "01":
             self.answer_view_menu_tournament_in_progress = "01"
         elif value_edit_result_first_round == "02" or value_edit_result_first_round is False:
@@ -189,11 +192,9 @@ class ControlerTournamentInProgress:
             list_tournament = self.list_tournament_work()["round"]
             list_tournament[id_round][4][1] = date_hour_end
             DataTournament().update_round("round", list_tournament, self.selection_tournament)
-            # print("Le Round est terminé")
-            # print("La date de début et de fin du round : ", self.list_tournament_work()["round"]["round_1"][4])
-        elif (value_edit_result_first_round[0] == "0" or value_edit_result_first_round[0] == "1" or
-                value_edit_result_first_round[0] == "0.5" or value_edit_result_first_round[1] == "0" or
-                value_edit_result_first_round[1] == "1" or value_edit_result_first_round[1] == "0.5"):
+        elif ((value_edit_result_first_round[0] == "0" and value_edit_result_first_round[1] == "1") or
+              (value_edit_result_first_round[1] == "0" and value_edit_result_first_round[0] == "1") or
+              (value_edit_result_first_round[1] == "0.5" and value_edit_result_first_round[1] == "0.5")):
             value_edit_result_first_round[0]  # joueur 1
             value_edit_result_first_round[1]  # joueur 2
             value_edit_result_first_round[2]  # match 1 a 4
@@ -202,8 +203,7 @@ class ControlerTournamentInProgress:
             list_tournament[id_round][value_edit_result_first_round[2]][1][1] = float(value_edit_result_first_round[1]) # joueur 2
             DataTournament().update_round("round", list_tournament, self.selection_tournament)
         else:
-            input("Le résultat sélectionné n'est pas valide, veuillez sélectionner 0, 1 ou 0.5")
-            input("Le résultat sélectionné n'est pas valide, veuillez sélectionner 0, 1 ou 0.5")
+            input("Le résultat sélectionné n'est pas valide, veuillez sélectionner 0 et 1 ou 0.5 et 0.5 ou 1 et 0")
 
     def creation_round(self, id_round):
         list_new_match = self.generate_match_round(id_round)
@@ -240,11 +240,12 @@ class ControlerTournamentInProgress:
                                    [int(DataPlayer().return_db().get(doc_id=list_player[7])["classification"]),
                                     list_player[7]]]]
         classement_first_round.sort(reverse=True)
-        print("Classement des joueurs du", "round_" + str(id_round), classement_first_round)
+        # print("Classement des joueurs du", "round_" + str(id_round), classement_first_round)
         list_new_match = []
-        i = 0
         for math in range(4):
+            i = 0
             for player in range(7):
+                print(classement_first_round)
                 match = [int(classement_first_round[0][1][1]), int(classement_first_round[i + 1][1][1])]
                 return_match_is_completed = self.check_match_is_not_completed(match)
                 if return_match_is_completed is False:
@@ -286,17 +287,18 @@ class ControlerTournamentInProgress:
         for round in self.list_tournament_work()["round"]:
             # un round
             for match in range(4):
-                # un match
-                # print(self.list_tournament_work()["round"][round][match]) # le match du round
-                # print("Le joueurs", self.list_tournament_work()["round"][round][match][0][0][1],
-                #       self.list_tournament_work()["round"][round][match][0][1]) # le score du joeurs premier joueur
-                # print("Le joueurs", self.list_tournament_work()["round"][round][match][1][0][1],
-                #       self.list_tournament_work()["round"][round][match][1][1]) # le score du joeurs deuxieme joueur
                 if self.list_tournament_work()["round"][round][match][0][0][1] == id_player:
                     point_player += self.list_tournament_work()["round"][round][match][0][1]
                 if self.list_tournament_work()["round"][round][match][1][0][1] == id_player:
                     point_player += self.list_tournament_work()["round"][round][match][1][1]
         return point_player
+
+    def players_and_score(self, id_tournament):
+        self.selection_tournament = id_tournament
+        list_player_and_score = []
+        for player in self.list_tournament_work()["players"]:
+            list_player_and_score.append([int(self.calculate_all_point_one_player(player)), player])
+        return list_player_and_score
 
     def list_tournament_work(self):
         return self.db_tournament.get(doc_id=str(self.selection_tournament))
