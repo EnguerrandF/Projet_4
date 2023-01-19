@@ -1,4 +1,4 @@
-from controleur import Controler
+from controleur.controleur import Controler
 
 
 def main():
