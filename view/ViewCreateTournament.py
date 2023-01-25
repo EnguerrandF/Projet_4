@@ -31,7 +31,7 @@ class ViewCreateTournament:
             if int(player.doc_id) > int(id_max_player):
                 id_max_player = str(player.doc_id)
 
-        print("id max", id_max_player)
+        # print("id max", id_max_player)
         for player in range(1, 9):
             players = input(f"Id du joueur {player} : ")
             if not players.isdigit() or int(players) > int(id_max_player) or players == "0":

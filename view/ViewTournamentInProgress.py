@@ -1,11 +1,12 @@
+from termcolor import colored
+
+
 class ViewTournamentInProgress:
     def __init__(self, list_tournement_in_progress, list_player_data_base,
                  progress_or_finished):
         self.list_tournement_in_progress = list_tournement_in_progress
         self.list_player_data_base = list_player_data_base
         self.progress_or_finished = progress_or_finished
-        self.value_input = 99
-        self.tournament_selected = None
 
     def menu_tournament_in_progress(self):
         print()
@@ -52,20 +53,28 @@ class ViewTournamentInProgress:
         print()
         print("1 ",
               self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][0][0][0][1]))["name"],
+              list_tournament_work["round"][id_round][0][0][1],
               "vs",
-              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][0][1][0][1]))["name"])
+              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][0][1][0][1]))["name"],
+              list_tournament_work["round"][id_round][0][1][1])
         print("2 ",
               self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][1][0][0][1]))["name"],
+              list_tournament_work["round"][id_round][1][0][1],
               "vs",
-              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][1][1][0][1]))["name"])
+              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][1][1][0][1]))["name"],
+              list_tournament_work["round"][id_round][1][1][1])
         print("3 ",
               self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][2][0][0][1]))["name"],
+              list_tournament_work["round"][id_round][2][0][1],
               "vs",
-              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][2][1][0][1]))["name"])
+              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][2][1][0][1]))["name"],
+              list_tournament_work["round"][id_round][2][1][1])
         print("4 ",
               self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][3][0][0][1]))["name"],
+              list_tournament_work["round"][id_round][3][0][1],
               "vs",
-              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][3][1][0][1]))["name"])
+              self.list_player_data_base.get(doc_id=str(list_tournament_work["round"][id_round][3][1][0][1]))["name"],
+              list_tournament_work["round"][id_round][3][1][1])
 
     def edit_result_round(self):
         print()
@@ -104,7 +113,7 @@ class ViewTournamentInProgress:
                     return "end"
                 else:
                     input("Non validé")
-                    return False 
+                    return False
             elif valeur_input == "01":
                 return "01"
             elif valeur_input == "02":
@@ -112,9 +121,8 @@ class ViewTournamentInProgress:
 
     def report_tournament(self, selection_tournament, list_player_and_score):
         print("Tournois terminé")
-        print()
         list_tournament = self.list_tournement_in_progress.get(doc_id=str(selection_tournament))
-        print(list_tournament)
+        # print(list_tournament)
         print()
         print("Nom du tournois :", list_tournament["name"])
         print("Date de début :", list_tournament["date_start"])
@@ -129,13 +137,18 @@ class ViewTournamentInProgress:
             print("Round " + str(round + 1))
             # print(list_tournament["round"]["round_" + str(round + 1)])
             for match in range(4):
-                print(self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)][match][0][0][1])["name"],
-                      self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)][match][0][0][1])["classification"],
-                      list_tournament["round"]["round_" + str(round + 1)][match][0][1],
+                print(self.color_text(list_tournament["round"]["round_" + str(round + 1)][match][0][1]),
+                      self.list_player_data_base.get(doc_id=list_tournament["round"]  
+                                                     ["round_" + str(round + 1)][match][0][0][1])["name"],
+                      # self.list_player_data_base.get(
+                      #                   doc_id=list_tournament["round"]["round_" + str(round + 1)]
+                      #                   [match][0][0][1])["classification"],
                       "vs ",
-                      self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)][match][1][0][1])["name"],
-                      self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)][match][1][0][1])["classification"],
-                      list_tournament["round"]["round_" + str(round + 1)][match][1][1]
+                      self.color_text(list_tournament["round"]["round_" + str(round + 1)][match][1][1]),
+                      self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)]
+                                                     [match][1][0][1])["name"],
+                      # self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)]
+                      #                                [match][1][0][1])["classification"],
                       )
             print()
             print("Date et heure de début :", list_tournament["round"]["round_" + str(round + 1)][4][0])
@@ -143,9 +156,23 @@ class ViewTournamentInProgress:
         print()
         print("Classement du tournois :")
         list_player_and_score.sort(reverse=True)
-        print(list_player_and_score)
+        # print(list_player_and_score)
+        i = 1
         for data in list_player_and_score:
-            print(self.list_player_data_base.get(doc_id=data[1])["name"],
-                  data[0], 
+            print(i,
+                  self.list_player_data_base.get(doc_id=data[1])["name"],
+                  data[0],
                   "points")
-        input("Menu principal")
+            i += 1
+        print()
+        print("01 Menu principal")
+        print("02 Retour")
+        return input("Sélectionner un chiffre")
+
+    def color_text(self, point):
+        if point == 1.0:
+            return colored("Victoire", 'green')
+        elif point == 0.0:
+            return colored("Défaite", 'red')
+        elif point == 0.5:
+            return colored("Egalité", 'cyan')

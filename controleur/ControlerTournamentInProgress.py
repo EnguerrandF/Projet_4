@@ -1,5 +1,3 @@
-import pprint
-
 from time import gmtime, strftime
 
 from models.models import DataPlayer, DataTournament
@@ -24,7 +22,7 @@ class ControlerTournamentInProgress:
         elif self.answer_view_menu_tournament_in_progress == "02":
             self.main()
         elif self.answer_view_menu_tournament_in_progress is True:
-            print("Afficher le tournois")
+            # print("Afficher le tournois")
             self.display_tournament()
         elif self.answer_display_tournament is True:
             self.continue_tournament()
@@ -33,7 +31,7 @@ class ControlerTournamentInProgress:
             self.main()
 
     def menu_tournament_in_progress(self):
-        print(DataTournament().return_db())
+        # print(DataTournament().return_db())
         answer_view_menu_tournament_in_progress = self.view_tournament_in_progress.menu_tournament_in_progress()
         self.answer_view_menu_tournament_in_progress = ""
         if (not answer_view_menu_tournament_in_progress.isdigit()):
@@ -80,8 +78,8 @@ class ControlerTournamentInProgress:
             if self.list_tournament_work()["round"]["round_2"][4][1] == "":
                 self.view_tournament_in_progress.display_match_round(self.list_tournament_work(), "round_2")
                 value_edit_result_first_round = self.view_tournament_in_progress.edit_result_round()
-                if value_edit_result_first_round[0] == False or value_edit_result_first_round[0] is False:
-                    print()
+                # if value_edit_result_first_round[0] is False or value_edit_result_first_round[0] is False:
+                #     print()
                 self.end_round(value_edit_result_first_round, "round_2")
             else:
                 self.creation_round(3)
@@ -101,7 +99,7 @@ class ControlerTournamentInProgress:
                 DataTournament().update_round("status", False, self.selection_tournament)
                 self.view_tournament_in_progress.report_tournament(self.selection_tournament,
                                                                    self.players_and_score(self.selection_tournament))
-                self.answer_view_menu_tournament_in_progress = ""
+                self.answer_view_menu_tournament_in_progress = "None"
                 self.answer_display_tournament = ""
 
     def creation_first_round(self):
@@ -110,7 +108,7 @@ class ControlerTournamentInProgress:
             list_player.append([int(self.db_player.get(doc_id=player)["classification"]),
                                 player])
         list_player.sort(reverse=True)
-        print("Classement des joueurs premier round : ", list_player)
+        # print("Classement des joueurs premier round : ", list_player)
         date_hour_start = strftime("%d %m %Y %H:%M:%S", gmtime())
         creation_round = {"round_1": [
                                     [[list_player[0], 0], [list_player[4], 0]],
@@ -119,8 +117,8 @@ class ControlerTournamentInProgress:
                                     [[list_player[3], 0], [list_player[7], 0]],
                                     [date_hour_start, ""]
                                     ]}
-        print("Match premier round: ", creation_round)
-        input()
+        # print("Match premier round: ", creation_round)
+        # input()
         DataTournament().update_round("round", creation_round, self.selection_tournament)
 
     def end_round(self, value_edit_result_first_round, id_round):
@@ -140,8 +138,10 @@ class ControlerTournamentInProgress:
             value_edit_result_first_round[1]  # joueur 2
             value_edit_result_first_round[2]  # match 1 a 4
             list_tournament = self.list_tournament_work()["round"]
-            list_tournament[id_round][value_edit_result_first_round[2]][0][1] = float(value_edit_result_first_round[0]) # joueur 1
-            list_tournament[id_round][value_edit_result_first_round[2]][1][1] = float(value_edit_result_first_round[1]) # joueur 2
+            list_tournament[id_round][value_edit_result_first_round[2]][0][1] = float(
+                value_edit_result_first_round[0])  # joueur 1
+            list_tournament[id_round][value_edit_result_first_round[2]][1][1] = float(
+                value_edit_result_first_round[1])  # joueur 2
             DataTournament().update_round("round", list_tournament, self.selection_tournament)
         else:
             input("Le résultat sélectionné n'est pas valide, veuillez sélectionner 0 et 1 ou 0.5 et 0.5 ou 1 et 0")
@@ -181,17 +181,17 @@ class ControlerTournamentInProgress:
                                    [int(DataPlayer().return_db().get(doc_id=list_player[7])["classification"]),
                                     list_player[7]]]]
         classement_first_round.sort(reverse=True)
-        print("Classement des joueurs du", "round_" + str(id_round), classement_first_round)
+        # print("Classement des joueurs du", "round_" + str(id_round), classement_first_round)
         list_new_match = []
         for math in range(4):
             i = 0
             for player in range(7):
-                print(classement_first_round)
+                # print(classement_first_round)
                 match = [int(classement_first_round[0][1][1]), int(classement_first_round[i + 1][1][1])]
                 return_match_is_completed = self.check_match_is_not_completed(match)
-                if return_match_is_completed is False:
+                if return_match_is_completed is False and len(classement_first_round) > 2:
                     pass
-                elif return_match_is_completed is True:
+                elif return_match_is_completed is True or len(classement_first_round) == 2:
                     id_player_one = str(classement_first_round[0][1][1])
                     id_player_two = str(classement_first_round[i + 1][1][1])
                     for_one_match = [
@@ -206,7 +206,7 @@ class ControlerTournamentInProgress:
 
         date_hour_start = strftime("%d %m %Y %H:%M:%S", gmtime())
         list_new_match.append([date_hour_start, ""])
-        print("Nouveau round: ", list_new_match)
+        # print("Nouveau round: ", list_new_match)
         return list_new_match
 
     def check_match_is_not_completed(self, new_match):
