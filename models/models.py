@@ -71,8 +71,8 @@ class DataTournament:
     def update_round(self, parameter_to_change, value_to_change, indice_tournament):
         self.db.update({parameter_to_change: value_to_change}, doc_ids=[indice_tournament])
 
-    def return_tournament_end(self):
+    def return_tournament_end(self, status):
         Q = Query()
-        results = self.db.search(Q.status == False)
+        results = self.db.search(Q.status == status)
         ids = [result.doc_id for result in results]
         return ids

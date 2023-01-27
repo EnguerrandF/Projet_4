@@ -21,7 +21,6 @@ class ViewPlayers:
     def main_display_player(self):
         if (not self.value_selection.isdigit() or int(self.value_selection) > len(self.db_player) or
                 self.value_selection == "0"):
-            # si id s'électionné est pas valide et que c'est une chaine de caractere
             input("Le chiffre sélectionné n'est pas valide")
             return self.main()
         elif len(self.value_selection) == 2 and self.value_selection[0] == "0":
@@ -97,7 +96,6 @@ class ViewPlayers:
     def main_data_one_player(self):
         self.data_one_player()
         if not self.value_selection.isdigit() or int(self.value_selection) > 4:
-            # si id s'électionné est pas valide et que c'est une chaine de caractere
             input("Le chiffre sélectionné n'est pas valide")
             self.main_display_player()
         elif len(self.value_selection) == 2 and self.value_selection[0] == "0":

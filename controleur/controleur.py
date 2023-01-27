@@ -50,14 +50,21 @@ class Controler:
                                                               self.list_player_in_data_base,
                                                               False)
             result_menu = tournament_in_progress.menu_tournament_in_progress()
-            id_tournament_end = DataTournament().return_tournament_end()
+            id_tournament_end = DataTournament().return_tournament_end(False)
 
-            if result_menu != "" and result_menu in str(id_tournament_end):
+            if result_menu != "" and result_menu != "0" and result_menu in str(id_tournament_end):
                 list_players_score = ControlerTournamentInProgress().players_and_score(result_menu)
                 result_report_tournament = tournament_in_progress.report_tournament(result_menu, list_players_score)
                 if result_report_tournament == "02":
                     self.answer_view_menu = "5"
                     self.selection_menu()
+                elif result_report_tournament == "01":
+                    self.answer_view_menu = ""
+                else:
+                    input("Sélection non valide : ")
+                    self.answer_view_menu = "5"
+                    self.selection_menu()
+
             elif result_menu == "01":
                 pass
             else:

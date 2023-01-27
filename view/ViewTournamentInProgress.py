@@ -122,7 +122,6 @@ class ViewTournamentInProgress:
     def report_tournament(self, selection_tournament, list_player_and_score):
         print("Tournois terminé")
         list_tournament = self.list_tournement_in_progress.get(doc_id=str(selection_tournament))
-        # print(list_tournament)
         print()
         print("Nom du tournois :", list_tournament["name"])
         print("Date de début :", list_tournament["date_start"])
@@ -135,39 +134,40 @@ class ViewTournamentInProgress:
         for round in range(4):
             print()
             print("Round " + str(round + 1))
-            # print(list_tournament["round"]["round_" + str(round + 1)])
             for match in range(4):
                 print(self.color_text(list_tournament["round"]["round_" + str(round + 1)][match][0][1]),
-                      self.list_player_data_base.get(doc_id=list_tournament["round"]  
+                      self.list_player_data_base.get(doc_id=list_tournament["round"]
                                                      ["round_" + str(round + 1)][match][0][0][1])["name"],
-                      # self.list_player_data_base.get(
-                      #                   doc_id=list_tournament["round"]["round_" + str(round + 1)]
-                      #                   [match][0][0][1])["classification"],
                       "vs ",
                       self.color_text(list_tournament["round"]["round_" + str(round + 1)][match][1][1]),
                       self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)]
                                                      [match][1][0][1])["name"],
-                      # self.list_player_data_base.get(doc_id=list_tournament["round"]["round_" + str(round + 1)]
-                      #                                [match][1][0][1])["classification"],
                       )
             print()
             print("Date et heure de début :", list_tournament["round"]["round_" + str(round + 1)][4][0])
             print("Date et heure de fin du round :", list_tournament["round"]["round_" + str(round + 1)][4][1])
         print()
         print("Classement du tournois :")
-        list_player_and_score.sort(reverse=True)
-        # print(list_player_and_score)
+        new_list_classement_player = []
+        for player in list_player_and_score:
+            new_list_classement_player.append(
+                [player[0],
+                 int(self.list_player_data_base.get(doc_id=player[1])["classification"]),
+                 self.list_player_data_base.get(doc_id=player[1])["name"]])
+        new_list_classement_player.sort(reverse=True)
         i = 1
-        for data in list_player_and_score:
+        for data in new_list_classement_player:
             print(i,
-                  self.list_player_data_base.get(doc_id=data[1])["name"],
+                  data[2],
+                  "classement",
+                  data[1],
                   data[0],
                   "points")
             i += 1
         print()
         print("01 Menu principal")
         print("02 Retour")
-        return input("Sélectionner un chiffre")
+        return input("Sélectionner un chiffre : ")
 
     def color_text(self, point):
         if point == 1.0:
